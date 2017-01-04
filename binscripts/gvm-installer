@@ -86,8 +86,8 @@ if [[ -z "$GIT_ROOT" || "$(basename "$GIT_ROOT")" != "gvm" ]]
 then
   echo "Cloning from $SRC_REPO to $GVM_DEST/$GVM_NAME"
 
-  git clone --quiet "$SRC_REPO" "$GVM_DEST/$GVM_NAME" 2> /dev/null ||
-	  display_error "Failed to clone from $SRC_REPO into $GVM_DEST/$GVM_NAME"
+  git clone "$SRC_REPO" "$GVM_DEST/$GVM_NAME"
+  [[ $? -ne 0 ]] && display_error "Failed to clone from $SRC_REPO into $GVM_DEST/$GVM_NAME"
 else
 	echo -n "Not cloning. "
   if [[ $GVM_DEST == *"$GIT_ROOT"* ]]
