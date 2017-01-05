@@ -98,7 +98,7 @@ then
 
 	_git_clone_cmd="git clone"
 	[[ "${GVM_DEBUG}" -eq 1 ]] && _git_clone_cmd="${_git_clone_cmd} --quiet"
-	"${_git_clone_cmd}" "$SRC_REPO" "$GVM_DEST/$GVM_NAME"
+	${_git_clone_cmd} "$SRC_REPO" "$GVM_DEST/$GVM_NAME"
   [[ $? -ne 0 ]] && display_error "Failed to clone from $SRC_REPO into $GVM_DEST/$GVM_NAME"
 	unset _git_clone_cmd
 else
