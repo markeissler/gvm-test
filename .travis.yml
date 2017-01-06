@@ -8,6 +8,8 @@ env:
   - GVM_NO_UPDATE_PROFILE=1
 git:
   depth: 9999999
+addons:
+  artifacts: true
 before_install:
 - binscripts/gvm-installer $TRAVIS_COMMIT $TRAVIS_BUILD_DIR/tmp
 install: gem install tf -v '>=0.4.1'
