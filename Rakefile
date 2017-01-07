@@ -1,4 +1,5 @@
 require 'tmpdir'
+require 'fileutils'
 
 def root_path
   File.expand_path('../.', __FILE__)
@@ -20,6 +21,8 @@ task :default do
         tf --text *_comment_test.sh
       '
     EOSH
+    # copy build logs to source directory
+    FileUtils.cp("#{tmpdir}/*.log", "#{root_path}/build_logs")
   end
 end
 
@@ -36,6 +39,9 @@ task :scenario do
           tf --text #{name}
         '
       EOSH
+      # copy build logs to source directory
+      FileUtils.cp("#{tmpdir}/*.log", "#{root_path}/build_logs")
     end
   end
 end
+
