@@ -22,7 +22,8 @@ task :default do
       '
     EOSH
     # copy build logs to source directory
-    FileUtils.cp("#{tmpdir}/*.log", "#{root_path}/build_logs")
+    FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+    FileUtils.cp(Dir.glob("#{tmpdir}/*.log"), "#{root_path}/build_logs")
   end
 end
 
@@ -40,7 +41,8 @@ task :scenario do
         '
       EOSH
       # copy build logs to source directory
-      FileUtils.cp("#{tmpdir}/*.log", "#{root_path}/build_logs")
+      FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+      FileUtils.cp(Dir.glob("#{tmpdir}/*.log"), "#{root_path}/build_logs")
     end
   end
 end
