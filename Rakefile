@@ -24,7 +24,7 @@ task :default do
     # copy build logs to source directory
     FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
     printf "Log files...\n"
-    Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", z) }
+    Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
     FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
   end
 end
@@ -45,7 +45,7 @@ task :scenario do
       # copy build logs to source directory
       FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
       printf "Log files...\n"
-      Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", z) }
+      Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
       FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
     end
   end
