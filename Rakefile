@@ -24,7 +24,7 @@ task :default do
     system_rslt=$?
     # copy build logs to source directory
     FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-    printf "Log files...\n"
+    printf "Log files... (tmpdir: #{tmpdir})\n"
     Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
     FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
     # raise if shell error occurred
@@ -50,7 +50,7 @@ task :scenario do
       system_rslt=$?
       # copy build logs to source directory
       FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-      printf "Log files...\n"
+      printf "Log files... (tmpdir: #{tmpdir})\n"
       Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
       FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
       # raise if shell error occurred
