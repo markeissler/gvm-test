@@ -74,6 +74,14 @@ update_source() {
 }
 
 copy_source() {
+	# @TODO: Bootstrap support should be moved into a separate function!
+	# MacOS Sierra (10.12) can no longer build binaries previous to 1.7 and that
+	# include go1.4. When targetting go1.4, fix $version to refer to the special
+	# release build that should remain buildable.
+	#
+	# refer to: https://github.com/golang/go/issues/16352
+	#
+	[[ "$version" == "1.4" ]] && version="release-branch.go1.4"
 	git clone -b "$version" "$GO_CACHE_PATH" "$GO_INSTALL_ROOT" >> "$GVM_ROOT/logs/go-$GO_NAME-install.log" 2>&1 ||
 		display_fatal "Couldn't copy source to target folder. Check the logs $GVM_ROOT/logs/go-$GO_NAME-install.log"
 }
@@ -332,3 +340,4 @@ main() {
 }
 
 main "$@"
+
