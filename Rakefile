@@ -24,6 +24,11 @@ task :default do
       EOSH
       raise(SystemCallError, "something bad happened") unless _system_rslt
     rescue SystemCallError => e
+      # copy build logs to source directory
+      FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+      printf "Log files... (tmpdir: #{tmpdir})\n"
+      Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
+      FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
       raise e
     ensure
       # copy build logs to source directory
@@ -51,6 +56,11 @@ task :scenario do
         EOSH
         raise(SystemCallError, "something bad happened") unless _system_rslt
       rescue SystemCallError => e
+        # copy build logs to source directory
+        FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+        printf "Log files... (tmpdir: #{tmpdir})\n"
+        Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
+        FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
         raise e
       ensure
         # copy build logs to source directory
