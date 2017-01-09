@@ -25,7 +25,7 @@ task :default do
     rescue SystemCallError => e
       raise e
     ensure
-      copy build logs to source directory
+      # copy build logs to source directory
       FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
       printf "Log files (1)... (tmpdir: #{tmpdir})\n"
       Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
