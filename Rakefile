@@ -12,10 +12,11 @@ def commit
 end
 
 task :default do
+  _system_status = nil
   Dir.mktmpdir('gvm-test') do |tmpdir|
     # begin
       # system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
-      _system_status = system(<<-EOSH)
+      _system_status ||= system(<<-EOSH)
         bash -c '
           #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
           source #{tmpdir}/gvm/scripts/gvm
@@ -32,18 +33,19 @@ task :default do
       Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
       FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
     # end
-    raise(SystemCallError, "system shell (bash) call failed 1") unless _system_status
   end
+  raise(SystemCallError, "system shell (bash) call failed 1") unless _system_status
 end
 
 task :scenario do
+  _system_status=nil
   Dir["#{root_path}/tests/scenario/*_comment_test.sh"].each do |test|
     name = File.basename(test)
     puts "Running scenario #{name}..."
     Dir.mktmpdir('gvm-test') do |tmpdir|
       # begin
         # system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
-        _system_status = system(<<-EOSH)
+        _system_status ||= system(<<-EOSH)
           bash -c '
             #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
             source #{tmpdir}/gvm/scripts/gvm
@@ -60,8 +62,8 @@ task :scenario do
         Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
         FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
       # end
-      raise(SystemCallError, "system shell (bash) call failed 2") unless _system_status
     end
   end
+  raise(SystemCallError, "system shell (bash) call failed 2") unless _system_status
 end
 
