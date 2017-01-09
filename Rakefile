@@ -34,6 +34,7 @@ task :default do
   # end
 
   tmpdir = Dir.mktmpdir('gvm-test')
+  exception_err=nil
   begin
     system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
       bash -c '
@@ -44,7 +45,8 @@ task :default do
       '
     EOSH
   rescue SystemCallError => e
-    raise e
+    # raise e
+    exception_err=e
   ensure
     # copy build logs to source directory
     FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
@@ -53,6 +55,7 @@ task :default do
     FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
     FileUtils.remove_dir(tmpdir, true)
   end
+  raise exception_err unless exception_err.nil?
 end
 
 task :scenario do
@@ -81,6 +84,7 @@ task :scenario do
     # end
 
     tmpdir = Dir.mktmpdir('gvm-test')
+    exception_err=nil
     begin
       system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
         bash -c '
@@ -91,7 +95,8 @@ task :scenario do
         '
       EOSH
     rescue SystemCallError => e
-      raise e
+      # raise e
+      exception_err=e
     ensure
       # copy build logs to source directory
       FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
@@ -100,6 +105,7 @@ task :scenario do
       FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
       FileUtils.remove_dir(tmpdir, true)
     end
+    raise exception_err unless exception_err.nil?
   end
 end
 
