@@ -12,31 +12,46 @@ def commit
 end
 
 task :default do
-  Dir.mktmpdir('gvm-test') do |tmpdir|
-    begin
-      _system_rslt = system(<<-EOSH)
-        bash -c '
-          #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
-          source #{tmpdir}/gvm/scripts/gvm
-          builtin cd #{tmpdir}/gvm/tests
-          tf --text *_comment_test.sh
-        '
-      EOSH
-      raise(SystemCallError, "something bad happened") unless _system_rslt
-    rescue SystemCallError => e
-      # copy build logs to source directory
-      FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-      printf "Log files... (tmpdir: #{tmpdir})\n"
-      Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
-      FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
-      raise e
-    ensure
-      # copy build logs to source directory
-      FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-      printf "Log files... (tmpdir: #{tmpdir})\n"
-      Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
-      FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
-    end
+  # Dir.mktmpdir('gvm-test') do |tmpdir|
+  #   begin
+  #     system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
+  #       bash -c '
+  #         #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
+  #         source #{tmpdir}/gvm/scripts/gvm
+  #         builtin cd #{tmpdir}/gvm/tests
+  #         tf --text *_comment_test.sh
+  #       '
+  #     EOSH
+  #   rescue SystemCallError => e
+  #     raise e
+  #   ensure
+  #     # copy build logs to source directory
+  #     FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+  #     printf "Log files... (tmpdir: #{tmpdir})\n"
+  #     Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
+  #     FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
+  #   end
+  # end
+
+  tmpdir = Dir.mktempdir('gvm-test')
+  begin
+    system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
+      bash -c '
+        #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
+        source #{tmpdir}/gvm/scripts/gvm
+        builtin cd #{tmpdir}/gvm/tests
+        tf --text *_comment_test.sh
+      '
+    EOSH
+  rescue SystemCallError => e
+    raise e
+  ensure
+    # copy build logs to source directory
+    FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+    printf "Log files... (tmpdir: #{tmpdir})\n"
+    Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
+    FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
+    FileUtils.remove_dir(tmpdir, true)
   end
 end
 
@@ -44,31 +59,46 @@ task :scenario do
   Dir["#{root_path}/tests/scenario/*_comment_test.sh"].each do |test|
     name = File.basename(test)
     puts "Running scenario #{name}..."
-    Dir.mktmpdir('gvm-test') do |tmpdir|
-      begin
-        _system_rslt = system(<<-EOSH)
-          bash -c '
-            #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
-            source #{tmpdir}/gvm/scripts/gvm
-            builtin cd #{tmpdir}/gvm/tests/scenario
-            tf --text #{name}
-          '
-        EOSH
-        raise(SystemCallError, "something bad happened") unless _system_rslt
-      rescue SystemCallError => e
-        # copy build logs to source directory
-        FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-        printf "Log files... (tmpdir: #{tmpdir})\n"
-        Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
-        FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
-        raise e
-      ensure
-        # copy build logs to source directory
-        FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-        printf "Log files... (tmpdir: #{tmpdir})\n"
-        Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
-        FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
-      end
+    # Dir.mktmpdir('gvm-test') do |tmpdir|
+    #   begin
+    #     system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
+    #       bash -c '
+    #         #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
+    #         source #{tmpdir}/gvm/scripts/gvm
+    #         builtin cd #{tmpdir}/gvm/tests/scenario
+    #         tf --text #{name}
+    #       '
+    #     EOSH
+    #   rescue SystemCallError => e
+    #     raise e
+    #   ensure
+    #     # copy build logs to source directory
+    #     FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+    #     printf "Log files... (tmpdir: #{tmpdir})\n"
+    #     Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
+    #     FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
+    #   end
+    # end
+
+    tmpdir = Dir.mktempdir('gvm-test')
+    begin
+      system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
+        bash -c '
+          #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
+          source #{tmpdir}/gvm/scripts/gvm
+          builtin cd #{tmpdir}/gvm/tests/scenario
+          tf --text #{name}
+        '
+      EOSH
+    rescue SystemCallError => e
+      raise e
+    ensure
+      # copy build logs to source directory
+      FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+      printf "Log files... (tmpdir: #{tmpdir})\n"
+      Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
+      FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
+      FileUtils.remove_dir(tmpdir, true)
     end
   end
 end
