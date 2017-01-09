@@ -13,4 +13,4 @@ addons:
 before_install:
   - binscripts/gvm-installer $TRAVIS_COMMIT $TRAVIS_BUILD_DIR/tmp
 install: gem install tf -v '>=0.4.1'
-script: source $TRAVIS_BUILD_DIR/tmp/gvm/scripts/gvm; rake default scenario
+script: source $TRAVIS_BUILD_DIR/tmp/gvm/scripts/gvm; rake --trace default; rake --trace scenario
