@@ -12,11 +12,9 @@ def commit
 end
 
 task :default do
-  _system_status = nil
   Dir.mktmpdir('gvm-test') do |tmpdir|
-    # begin
-      # system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
-      _system_status ||= system(<<-EOSH)
+    begin
+      system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
         bash -c '
           #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
           source #{tmpdir}/gvm/scripts/gvm
@@ -24,28 +22,25 @@ task :default do
           tf --text *_comment_test.sh
         '
       EOSH
-    # rescue SystemCallError => e
-    #   raise e
-    # ensure
-      # copy build logs to source directory
+    rescue SystemCallError => e
+      raise e
+    ensure
+      copy build logs to source directory
       FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
       printf "Log files (1)... (tmpdir: #{tmpdir})\n"
       Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
       FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
-    # end
+    end
   end
-  raise(SystemCallError, "system shell (bash) call failed 1") unless _system_status
 end
 
 task :scenario do
-  _system_status=nil
   Dir["#{root_path}/tests/scenario/*_comment_test.sh"].each do |test|
     name = File.basename(test)
     puts "Running scenario #{name}..."
     Dir.mktmpdir('gvm-test') do |tmpdir|
-      # begin
-        # system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
-        _system_status ||= system(<<-EOSH)
+      begin
+        system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
           bash -c '
             #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
             source #{tmpdir}/gvm/scripts/gvm
@@ -53,17 +48,16 @@ task :scenario do
             tf --text #{name}
           '
         EOSH
-      # rescue SystemCallError => e
-      #   raise e
-      # ensure
+      rescue SystemCallError => e
+        raise e
+      ensure
         # copy build logs to source directory
         FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
         printf "Log files (2)... (tmpdir: #{tmpdir})\n"
         Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
         FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
-      # end
+      end
     end
   end
-  raise(SystemCallError, "system shell (bash) call failed 2") unless _system_status
 end
 
