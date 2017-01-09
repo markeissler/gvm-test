@@ -14,7 +14,7 @@ end
 task :default do
   Dir.mktmpdir('gvm-test') do |tmpdir|
     begin
-      system(<<-EOSH) || fail SystemCallError, "system shell (bash) call failed"
+      system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
         bash -c '
           #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
           source #{tmpdir}/gvm/scripts/gvm
@@ -40,7 +40,7 @@ task :scenario do
     puts "Running scenario #{name}..."
     Dir.mktmpdir('gvm-test') do |tmpdir|
       begin
-        system(<<-EOSH) || fail SystemCallError, "system shell (bash) call failed"
+        system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
           bash -c '
             #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
             source #{tmpdir}/gvm/scripts/gvm
