@@ -33,7 +33,7 @@ task :default do
   #   end
   # end
 
-  tmpdir = Dir.mktempdir('gvm-test')
+  tmpdir = Dir.mktmpdir('gvm-test')
   begin
     system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
       bash -c '
@@ -80,7 +80,7 @@ task :scenario do
     #   end
     # end
 
-    tmpdir = Dir.mktempdir('gvm-test')
+    tmpdir = Dir.mktmpdir('gvm-test')
     begin
       system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
         bash -c '
