@@ -2,7 +2,7 @@
 . "$GVM_ROOT/scripts/functions"
 
 # const
-GO_BOOTSTRAP_BRANCH_1.4="release-branch.go1.4"
+GO_BOOTSTRAP_BRANCH="release-branch.go1.4"
 
 function show_usage() {
 	echo "Usage: gvm install [version] [options]"
@@ -65,7 +65,7 @@ download_source() {
 	git clone "$GO_SOURCE_URL" "$GO_CACHE_PATH" >> "$GVM_ROOT/logs/go-download.log"  2>&1 ||
 		display_fatal "Couldn't download Go source. Check the logs $GVM_ROOT/logs/go-download.log"
 	# clone the bootstrap branch too!
-	git checkout -b "${GO_BOOTSTRAP_BRANCH_1.4}" >> "$GVM_ROOT/logs/go-download.log"  2>&1
+	git checkout -b "${GO_BOOTSTRAP_BRANCH}" >> "$GVM_ROOT/logs/go-download.log"  2>&1
 		display_fatal "Couldn't download Go bootstrap branch. Check the logs $GVM_ROOT/logs/go-bootstrap.log"
 	# but switch back to master branch when done.
 	git checkout master
@@ -90,7 +90,7 @@ copy_source() {
 	# refer to: https://github.com/golang/go/issues/16352
 	#
 	local _version="${version}"
-	[[ "$_version" == "go1.4" ]] && _version="${GO_BOOTSTRAP_BRANCH_1.4}"
+	[[ "$_version" == "go1.4" ]] && _version="${GO_BOOTSTRAP_BRANCH}"
 	display_message "Copying Go source... (version: ${_version})"
 	git clone -b "${_version}" "$GO_CACHE_PATH" "$GO_INSTALL_ROOT" >> "$GVM_ROOT/logs/go-$GO_NAME-install.log" 2>&1 ||
 		display_fatal "Couldn't copy source to target folder. Check the logs $GVM_ROOT/logs/go-$GO_NAME-install.log"
