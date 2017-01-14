@@ -64,15 +64,17 @@ download_source() {
 	display_message "Downloading Go source..."
 	git clone "$GO_SOURCE_URL" "$GO_CACHE_PATH" >> "$GVM_ROOT/logs/go-download.log" 2>&1 ||
 		display_fatal "Couldn't download Go source. Check the logs $GVM_ROOT/logs/go-download.log"
-	# clone the bootstrap branch too!
+	# clone the bootstrap branch, switch to the branch to create it locally,
+	# then switch back to master branch.
 	_pwd="${PWD}"
 	(builtin cd "$GO_CACHE_PATH" &&
 		git remote set-branches origin "${GO_BOOTSTRAP_BRANCH}" >> "$GVM_ROOT/logs/go-bootstrap.log" 2>&1 &&
 		git fetch origin "${GO_BOOTSTRAP_BRANCH}" >> "$GVM_ROOT/logs/go-bootstrap.log" 2>&1 &&
-		git checkout "${GO_BOOTSTRAP_BRANCH}" >> "$GVM_ROOT/logs/go-bootstrap.log" 2>&1) ||
+		git checkout "${GO_BOOTSTRAP_BRANCH}" >> "$GVM_ROOT/logs/go-bootstrap.log" 2>&1 &&
+		git checkout master &&
+		builtin cd "${_pwd}") ||
 			display_fatal "Couldn't download Go bootstrap branch. Check the logs $GVM_ROOT/logs/go-bootstrap.log"
-	# but switch back to master branch when done.
-	git checkout master
+	unset _pwd
 }
 
 check_tag() {
