@@ -16,12 +16,18 @@ task :default do
     begin
       system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
         bash -c '
-          { #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir} || exit 1; }
-          { source #{tmpdir}/gvm/scripts/gvm || exit 1; }
-          { builtin cd #{tmpdir}/gvm/tests || exit 1; }
-          { tf --text *_comment_test.sh || exit 1; }
+          #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
         '
       EOSH
+      Dir.glob("#{tmpdir}/gvm/tests/*_comment_test.sh").each do |f|
+        system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
+          bash -c '
+            source #{tmpdir}/gvm/scripts/gvm
+            builtin cd #{tmpdir}/gvm/tests
+            tf --text "#{f}"
+          '
+        EOSH
+      end
     rescue SystemCallError => e
       raise e
     ensure
