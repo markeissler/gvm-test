@@ -14,7 +14,8 @@ end
 task :default do
   Dir.mktmpdir('gvm-test') do |tmpdir|
     begin
-      system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
+      # system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
+      system(<<-EOSH) || fail
         bash -c '
           #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
           source #{tmpdir}/gvm/scripts/gvm
@@ -22,7 +23,6 @@ task :default do
           tf --text *_comment_test.sh
         '
       EOSH
-      raise(SystemCallError, "system shell (bash) call failed") unless $?.zero?
     rescue SystemCallError => e
       raise e
     ensure
