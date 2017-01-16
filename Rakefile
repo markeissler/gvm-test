@@ -16,8 +16,8 @@ task :default do
     begin
       system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
         bash -c '
-          #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir} || exit 1
-        '
+          #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
+        ' || exit 1
         EOSH
       system(<<-EOSH) || raise(SystemCallError, "system shell (bash) call failed")
         bash -c '
