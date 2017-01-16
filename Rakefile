@@ -30,6 +30,7 @@ task :default do
       end
     rescue SystemCallError => e
       raise e
+      exit 1
     ensure
       # copy build logs to source directory
       FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
