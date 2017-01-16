@@ -22,6 +22,7 @@ task :default do
           tf --text *_comment_test.sh
         '
       EOSH
+      raise(SystemCallError, "system shell (bash) call failed") unless $?.zero?
     rescue SystemCallError => e
       raise e
     ensure
