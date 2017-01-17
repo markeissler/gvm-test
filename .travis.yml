@@ -1,6 +1,5 @@
 language: c
-os: [linux, osx]
-osx_image: mavericks
+os: [linux]
 env:
   global:
   - SRC_REPO=$TRAVIS_BUILD_DIR
@@ -14,7 +13,5 @@ before_install:
 - binscripts/gvm-installer $TRAVIS_COMMIT $TRAVIS_BUILD_DIR/tmp
 install: gem install tf -v '>=0.4.1'
 script:
-- source $TRAVIS_BUILD_DIR/tmp/gvm/scripts/gvm \
-  && rake --trace default
-  && rake --trace scenario
+- rake --trace default && rake --trace scenario 
 
