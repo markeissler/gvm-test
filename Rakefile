@@ -11,17 +11,24 @@ def commit
   )
 end
 
-def copy_logs(build_directory="")
+# copy build logs to source directory
+def copy_logs(build_directory, label="")
   _build_directory = build_directory
   if _build_directory.nil? || _build_directory.empty?
     raise ArgumentError, "invalid build_directory specified: nil or empty"
   end
 
-  # copy build logs to source directory
+  _label = ""
+  _label = "(#{label})" unless (label.nil? || label.empty?)
+
   FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-  printf "Log files (1)... (build_directory: #{_build_directory})\n"
-  Dir.glob("#{_build_directory}/**/*.log").each { |f| printf("%s\n", f) }
-  FileUtils.cp(Dir.glob("#{_build_directory}/gvm/logs/*.log"), "#{root_path}/build_logs")
+  _build_logs = Dir.glob("#{_build_directory}/gvm/logs/*.log")
+
+  # debugging
+  printf "Log files #{_label}... (build_directory: #{_build_directory})\n"
+  _build_logs.each { |f| printf("%s\n", f) }
+
+  FileUtils.cp(_build_logs, "#{root_path}/build_logs")
 end
 
 task :default do
@@ -44,12 +51,7 @@ task :default do
     rescue SystemCallError => e
       raise e
     ensure
-      copy_logs(tmpdir)
-      # copy build logs to source directory
-      # FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-      # printf "Log files (1)... (tmpdir: #{tmpdir})\n"
-      # Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
-      # FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
+      copy_logs(tmpdir, "task: default")
     end
   end
 end
@@ -71,11 +73,7 @@ task :scenario do
       rescue SystemCallError => e
         raise e
       ensure
-        # copy build logs to source directory
-        FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-        printf "Log files (2)... (tmpdir: #{tmpdir})\n"
-        Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
-        FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
+        copy_logs(tmpdir, "task: scenario")
       end
     end
   end
