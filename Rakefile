@@ -11,6 +11,19 @@ def commit
   )
 end
 
+def copy_logs(build_directory="")
+  _build_directory = build_directory
+  if _build_directory.nil? || _build_directory.empty?
+    raise ArgumentError, "invalid build_directory specified: nil or empty"
+  end
+
+  # copy build logs to source directory
+  FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+  printf "Log files (1)... (build_directory: #{_build_directory})\n"
+  Dir.glob("#{_build_directory}/**/*.log").each { |f| printf("%s\n", f) }
+  FileUtils.cp(Dir.glob("#{_build_directory}/gvm/logs/*.log"), "#{root_path}/build_logs")
+end
+
 task :default do
   Dir.mktmpdir('gvm-test') do |tmpdir|
     begin
@@ -31,11 +44,12 @@ task :default do
     rescue SystemCallError => e
       raise e
     ensure
+      copy_logs(tmpdir)
       # copy build logs to source directory
-      FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
-      printf "Log files (1)... (tmpdir: #{tmpdir})\n"
-      Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
-      FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
+      # FileUtils.mkdir("#{root_path}/build_logs") unless Dir.exist?("#{root_path}/build_logs")
+      # printf "Log files (1)... (tmpdir: #{tmpdir})\n"
+      # Dir.glob("#{tmpdir}/**/*.log").each { |f| printf("%s\n", f) }
+      # FileUtils.cp(Dir.glob("#{tmpdir}/gvm/logs/*.log"), "#{root_path}/build_logs")
     end
   end
 end
