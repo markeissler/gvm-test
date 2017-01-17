@@ -16,5 +16,5 @@ install: gem install tf -v '>=0.4.1'
 script:
 - source $TRAVIS_BUILD_DIR/tmp/gvm/scripts/gvm \
   && rake --trace default \
-  && rake --trace scenario
+  && rake --trace scenario \
 
