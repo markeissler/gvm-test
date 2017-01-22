@@ -31,6 +31,7 @@ def copy_logs(build_directory, label="")
   FileUtils.cp(_build_logs, "#{root_path}/build_logs")
 end
 
+desc "Run simple tests"
 task :default do
   Dir.mktmpdir('gvm-test') do |tmpdir|
     begin
@@ -56,6 +57,7 @@ task :default do
   end
 end
 
+desc "Run scenario tests"
 task :scenario do
   Dir["#{root_path}/tests/scenario/*_comment_test.sh"].each do |test|
     name = File.basename(test)
@@ -67,7 +69,7 @@ task :scenario do
             #{root_path}/binscripts/gvm-installer #{commit} #{tmpdir}
             source #{tmpdir}/gvm/scripts/gvm
             builtin cd #{tmpdir}/gvm/tests/scenario
-            tf --text #{name}
+            tf --text "#{name}"
           '
         EOSH
       rescue SystemCallError => e
