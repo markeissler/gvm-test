@@ -175,7 +175,7 @@ patch_go() {
 		[[ -z "${_src_directory}" || ! -d "${_src_directory}" ]] && display_fatal "Couldn't patch source, invalid directory specified: \"${2}\""
 		# patch src/cmd/dist/build.c
 		if [[ -f "${src_directory}/cmd/dist/build.c" ]]; then
-			sed -i".bak" -r "/\"-Werror\",/d" "${src_directory}/cmd/dist/build.c"
+			sed -i".bak" "/\"-Werror\",/d" "${src_directory}/cmd/dist/build.c"
 		fi
 	fi
 
