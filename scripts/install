@@ -267,7 +267,7 @@ download_binary() {
 		local _os_version _binary_os_version
 		_os_version="${_run_os#*,}"; _os_version="${_run_os%,*}"
 		_binary_os_version="${_os_version:+-}${_os_version}"
-		GO_BINARY_FILE=${VERSION}.${GVM_OS}-${GVM_ARCH}${_os_version}.tar.gz
+		GO_BINARY_FILE=${VERSION}.${GVM_OS}-${GVM_ARCH}${_binary_os_version}.tar.gz
 		unset _binary_os_version _os_version
 	else
 		GO_BINARY_FILE=${VERSION}.${GVM_OS}-${GVM_ARCH}.tar.gz
