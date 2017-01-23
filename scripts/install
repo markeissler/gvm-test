@@ -264,9 +264,11 @@ download_binary() {
 	SEMVER=$(extract_version $VERSION)
 	compare_version $SEMVER "1.4.3"
 	if [ $? -eq 2 ]; then
-		local _os_version="${GVM_OS_VERSION:+-}${GVM_OS_VERSION}"
+		local _os_version _binary_os_version
+		_os_version="${_run_os#*,}"; _os_version="${_run_os%,*}"
+		_binary_os_version="${_os_version:+-}${_os_version}"
 		GO_BINARY_FILE=${VERSION}.${GVM_OS}-${GVM_ARCH}${_os_version}.tar.gz
-		unset _os_version
+		unset _binary_os_version _os_version
 	else
 		GO_BINARY_FILE=${VERSION}.${GVM_OS}-${GVM_ARCH}.tar.gz
 	fi
