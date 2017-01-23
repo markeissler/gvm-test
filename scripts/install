@@ -12,7 +12,7 @@ detect_run_os() {
 
 	if [ "${_uname_str}" == "Darwin" ]; then
 		local _macos_version
-		_run_os="darwin,"
+		_run_os="darwin"
 		_macos_version="$(sw_vers -productVersion | cut -d "." -f 2)"
 		if [ "${_macos_version}" -ge 8 ]; then
 			_run_os="${_run_os},osx10.8"
@@ -167,7 +167,7 @@ patch_go() {
 
 	local _version_major _version_minor
 	_version_major="${_version%%.*}"
-	_version_minor="${_version#$_version_major.}";
+	_version_minor="${_version#$_version_major.}"
 	_version_minor="${_version_minor%%.*}" 		# handle 1.2
 	_version_minor="${_version_minor%%beta*}"	# handle 1beta2
 	_version_minor="${_version_minor%%rc*}"		# handle 1rc3
