@@ -171,11 +171,11 @@ patch_go() {
 	_version_minor="${_version_minor%%.*}" 		# handle 1.2
 	_version_minor="${_version_minor%%beta*}"	# handle 1beta2
 	_version_minor="${_version_minor%%rc*}"		# handle 1rc3
-	if [[ "${_run_os%%,*}" == "Darwin" && "${_version_major%%.*}" == "go1" && ${_version_minor} -lt 5 ]]; then
+	if [[ "${_run_os%%,*}" == "darwin" && "${_version_major%%.*}" == "go1" && ${_version_minor} -lt 5 ]]; then
 		[[ -z "${_src_directory}" || ! -d "${_src_directory}" ]] && display_fatal "Couldn't patch source, invalid directory specified: \"${2}\""
 		# patch src/cmd/dist/build.c
-		if [[ -f "${src_directory}/cmd/dist/build.c" ]]; then
-			sed -i".bak" "/\"-Werror\",/d" "${src_directory}/cmd/dist/build.c"
+		if [[ -f "${_src_directory}/src/cmd/dist/build.c" ]]; then
+			sed -i".bak" "/\"-Werror\",/d" "${_src_directory}/src/cmd/dist/build.c"
 		fi
 	fi
 
