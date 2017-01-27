@@ -163,7 +163,7 @@ patch_go() {
 
 	if [[ "${GVM_DEBUG}" -eq 1 ]]
 	then
-		echo "patch_go() called with:"
+		echo "scripts/install - patch_go() called with:"
 		echo "  _version       -> ${_version}"
 		echo "  _src_directory -> ${_src_directory}"
 	fi
@@ -253,33 +253,39 @@ download_binary() {
 	mkdir -p $GO_INSTALL_ROOT >> "${GVM_ROOT}/logs/go-${GO_NAME}-download-binary" 2>&1
 
 	local _run_os
+	local _os _os_version _os_arch
 	_run_os="$(detect_run_os)"
+	_os="${_run_os%%,*}"
+	_os_version="${_run_os#*,}"; _os_version="${_run_os%,*}"
+	_os_arch="${_run_os##*,}"
 
-	if [[ "${_run_os}" == "unknown,," ]]; then
+	if [[ "${GVM_DEBUG}" -eq 1 ]]
+	then
+		echo "scripts/install - download_binary() vars:"
+		echo "  _run_os       -> ${_run_os}"
+		echo "  _os           -> ${_os}"
+		echo "  _os_version   -> ${_os_version}"
+		echo "  _os_arch      -> ${_os_arch}"
+	fi
+
+	if [[ "${_os}" == "unknown" ]]; then
 		display_error "Binary Go unavailable for this platform"
 		rm -rf $GO_INSTALL_ROOT
 		rm -f $GO_BINARY_PATH
 		exit 1
 	fi
 
-	if [[ "${_run_os##*,}" == "x86_64" ]]; then
-		GVM_ARCH="amd64"
-	else
-		GVM_ARCH="386"
-	fi
-	unset _run_os
-
 	SEMVER=$(extract_version $VERSION)
 	compare_version $SEMVER "1.4.3"
 	if [ $? -eq 2 ]; then
-		local _os_version _binary_os_version
-		_os_version="${_run_os#*,}"; _os_version="${_run_os%,*}"
+		local _binary_os_version
 		_binary_os_version="${_os_version:+-}${_os_version}"
-		GO_BINARY_FILE=${VERSION}.${GVM_OS}-${GVM_ARCH}${_binary_os_version}.tar.gz
-		unset _binary_os_version _os_version
+		GO_BINARY_FILE=${VERSION}.${_os}-${_os_arch}${_binary_os_version}.tar.gz
+		unset _binary_os_version
 	else
-		GO_BINARY_FILE=${VERSION}.${GVM_OS}-${GVM_ARCH}.tar.gz
+		GO_BINARY_FILE=${VERSION}.${_os}-${_os_arch}.tar.gz
 	fi
+
 	GO_BINARY_URL="http://golang.org/dl/${GO_BINARY_FILE}"
 	GO_BINARY_PATH=${GVM_ROOT}/archive/${GO_BINARY_FILE}
 
@@ -309,6 +315,9 @@ download_binary() {
 		rm -f $GO_BINARY_PATH
 		exit 1
 	fi
+
+	unset _os _os_version _os_arch
+	unset _run_os
 }
 
 install_go_binary() {
