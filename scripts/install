@@ -150,14 +150,16 @@ compile_go() {
 	export GOROOT=$GO_INSTALL_ROOT &&
 	if [ ! -f "$GO_INSTALL_ROOT/VERSION" ]; then echo "$GO_NAME" > "$GO_INSTALL_ROOT/VERSION"; fi &&
 	#builtin cd $GO_INSTALL_ROOT/src && ./all.bash &> $GVM_ROOT/logs/go-$GO_NAME-compile.log ||
-	builtin cd "$GO_INSTALL_ROOT/src" && patch_go "${GO_NAME}" "${GO_INSTALL_ROOT}/src" && ./make.bash &> "$GVM_ROOT/logs/go-$GO_NAME-compile.log" ||
+	builtin cd "$GO_INSTALL_ROOT/src" && ./make.bash &> "$GVM_ROOT/logs/go-$GO_NAME-compile.log" ||
 		{ rm -rf "$GO_INSTALL_ROOT" && display_fatal "Failed to compile. Check the logs at $GVM_ROOT/logs/go-$GO_NAME-compile.log"; }
 }
 
 # patch old go versions to build on MacOS Sierra (10.12)
 patch_go() {
-	local _version _src_directory _run_os
+	display_message " * Patching..."
+	local _patch_applied _version _src_directory _run_os
 
+	_patch_applied=0
 	_version="${1}"
 	_src_directory="${2:-$PWD}"
 
@@ -181,13 +183,16 @@ patch_go() {
 	if [[ "${_run_os%%,*}" == "darwin" && "${_version_major%%.*}" == "go1" && ${_version_minor} -lt 5 ]]; then
 		[[ -z "${_src_directory}" || ! -d "${_src_directory}" ]] && display_fatal "Couldn't patch source, invalid directory specified: \"${2}\""
 		# patch src/cmd/dist/build.c
-		if [[ -f "${_src_directory}/cmd/dist/build.c" ]]; then
-			display_message "Patching Go source... (version: ${_version})"
+		if [[ -f "${_src_directory}/cmd/dist/build.c" ]]
+		then
 			sed -i".bak" "/\"-Werror\",/d" "${_src_directory}/cmd/dist/build.c"
+			_patch_applied=1
 		fi
 	fi
 
-	unset _run_os _src_directory
+	[[ "${_patch_applied}" -eq 0 ]] && display_message " ** Patching skipped (not needed)"
+
+	unset _run_os _src_directory _version _patch_applied
 }
 
 create_enviroment() {
@@ -243,6 +248,7 @@ install_go() {
 
 	create_global_package_set
 	copy_source
+	patch_go "${GO_NAME}" "${GO_INSTALL_ROOT}/src"
 	compile_go
 	create_enviroment
 
