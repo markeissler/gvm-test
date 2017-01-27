@@ -161,6 +161,13 @@ patch_go() {
 	_version="${1}"
 	_src_directory="${2:-$PWD}"
 
+	if [[ "${GVM_DEBUG}" -eq 1 ]]
+	then
+		echo "patch_go() called with:"
+		echo "  _version       -> ${_version}"
+		echo "  _src_directory -> ${_src_directory}"
+	fi
+
 	[[ "x${_version}" == "x" ]] && display_fatal "Couldn't patch source, invalid version specified:  \"${1}\""
 
 	_run_os="$(detect_run_os)"
@@ -175,6 +182,7 @@ patch_go() {
 		[[ -z "${_src_directory}" || ! -d "${_src_directory}" ]] && display_fatal "Couldn't patch source, invalid directory specified: \"${2}\""
 		# patch src/cmd/dist/build.c
 		if [[ -f "${_src_directory}/src/cmd/dist/build.c" ]]; then
+			display_message "Patching Go source... (version: ${_version})"
 			sed -i".bak" "/\"-Werror\",/d" "${_src_directory}/src/cmd/dist/build.c"
 		fi
 	fi
