@@ -150,7 +150,7 @@ compile_go() {
 	export GOROOT=$GO_INSTALL_ROOT &&
 	if [ ! -f "$GO_INSTALL_ROOT/VERSION" ]; then echo "$GO_NAME" > "$GO_INSTALL_ROOT/VERSION"; fi &&
 	#builtin cd $GO_INSTALL_ROOT/src && ./all.bash &> $GVM_ROOT/logs/go-$GO_NAME-compile.log ||
-	builtin cd "$GO_INSTALL_ROOT/src" && patch_go "${GO_NAME}" "${PWD}" && ./make.bash &> "$GVM_ROOT/logs/go-$GO_NAME-compile.log" ||
+	builtin cd "$GO_INSTALL_ROOT/src" && patch_go "${GO_NAME}" "${GO_INSTALL_ROOT}/src" && ./make.bash &> "$GVM_ROOT/logs/go-$GO_NAME-compile.log" ||
 		{ rm -rf "$GO_INSTALL_ROOT" && display_fatal "Failed to compile. Check the logs at $GVM_ROOT/logs/go-$GO_NAME-compile.log"; }
 }
 
@@ -181,9 +181,9 @@ patch_go() {
 	if [[ "${_run_os%%,*}" == "darwin" && "${_version_major%%.*}" == "go1" && ${_version_minor} -lt 5 ]]; then
 		[[ -z "${_src_directory}" || ! -d "${_src_directory}" ]] && display_fatal "Couldn't patch source, invalid directory specified: \"${2}\""
 		# patch src/cmd/dist/build.c
-		if [[ -f "${_src_directory}/src/cmd/dist/build.c" ]]; then
+		if [[ -f "${_src_directory}/cmd/dist/build.c" ]]; then
 			display_message "Patching Go source... (version: ${_version})"
-			sed -i".bak" "/\"-Werror\",/d" "${_src_directory}/src/cmd/dist/build.c"
+			sed -i".bak" "/\"-Werror\",/d" "${_src_directory}/cmd/dist/build.c"
 		fi
 	fi
 
