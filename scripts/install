@@ -256,7 +256,7 @@ download_binary() {
 	local _os _os_version _os_arch
 	_run_os="$(detect_run_os)"
 	_os="${_run_os%%,*}"
-	_os_version="${_run_os#*,}"; _os_version="${_run_os%,*}"
+	_os_version="${_run_os#*,}"; _os_version="${_os_version%,*}"
 	_os_arch="${_run_os##*,}"
 
 	if [[ "${GVM_DEBUG}" -eq 1 ]]
