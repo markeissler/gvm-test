@@ -30,8 +30,13 @@ def copy_logs(build_directory, label="")
   if ENV['GVM_DEBUG'] == '1'
     printf "  log file source directory: #{_build_directory}/gvm/logs/\n"
     printf "  log file output directory: #{root_path}/build_logs/\n"
-    printf "  log files found..."
-    _build_logs.each { |f| printf("  %s\n", f) }
+    printf "  log files found...\n"
+
+    if _build_logs.count > 0
+      _build_logs.each_with_index { |f,i| printf("  [%3d] %s\n", i+1, f) }
+    else
+      printf "  No log files found.\n"
+    end
   end
 
   FileUtils.cp(_build_logs, "#{root_path}/build_logs")
